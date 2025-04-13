@@ -31,4 +31,15 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    /**
+     * カテゴリーを全て取得
+     * 
+     * @return App\Model\Category $result カテゴリーモデル
+     */
+    public function getAllCategories()
+    {
+        $result = $this->get();
+        return $result;
+    }
 }
