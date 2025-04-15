@@ -1,4 +1,3 @@
-{{-- layouts.common.blade.phpのレイアウト継承 --}}
 @extends('layouts.common')
 
 @include('common.header')

@@ -31,6 +31,11 @@ class Post extends Model
         'updated_at'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -45,6 +50,34 @@ class Post extends Model
     public function getAllPostsByUserId($user_id)
     {
         $result = $this->where('user_id', $user_id)->with('category')->get();
+        return $result;
+    }
+
+    /**
+     * 投稿データを全て取得し、最新更新日時順にソート。総合トップ画面に表示する記事はステータス「公開」(publish_flg=1)のみ
+     */
+    public function getPostsSortByLatestUpdate()
+    {
+        $result = $this->where('publish_flg', 1)
+                ->orderBy('updated_at', 'DESC')
+                ->with('user')
+                ->with('category')
+                ->get();
+        return $result;
+    }
+
+    /**
+     * カテゴリーIDに紐づいた投稿リストを全て取得する
+     * 
+     * @param int $category_id カテゴリーID
+     * @return Post
+     */
+    public function getPostsByCategoryId($category_id)
+    {
+        $result = $this->where('category_id', $category_id)
+                ->orderBy('updated_at', 'DESC')
+                ->with('user')
+                ->get();
         return $result;
     }
 
@@ -114,6 +147,18 @@ class Post extends Model
             'favorite_counter' => 0,
             'delete_flg'       => 0,
         ]);
+        return $result;
+    }
+
+    /**
+     * 投稿IDをもとにpostsテーブルから一意の投稿データを取得
+     * 
+     * @param int $post_id 投稿ID
+     * @return object $result App\Models\Post
+     */
+    public function feachPostDateByPostId($post_id)
+    {
+        $result = $this->find($post_id);
         return $result;
     }
 }
