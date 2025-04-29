@@ -49,7 +49,11 @@ class Post extends Model
      */
     public function getAllPostsByUserId($user_id)
     {
-        $result = $this->where('user_id', $user_id)->with('category')->get();
+        $result = $this->where('user_id', $user_id)
+                ->orderBy('updated_at', 'DESC')
+                ->with('category')
+                ->where('delete_flg', 0)
+                ->get();
         return $result;
     }
 
@@ -63,6 +67,18 @@ class Post extends Model
                 ->with('user')
                 ->with('category')
                 ->get();
+        return $result;
+    }
+
+    /**
+     * 投稿IDをもとにpostsテーブルから一意の投稿データを取得
+     * 
+     * @param int $post_id 投稿ID
+     * @return object $result App\Models\Post
+     */
+    public function feachPostDateByPostId($post_id)
+    {
+        $result = $this->find($post_id);
         return $result;
     }
 
@@ -104,6 +120,20 @@ class Post extends Model
         return $result;
     }
 
+    /**
+     * 既存の投稿データを更新する
+     * 
+     * @param int $post_id 投稿ID
+     * @param array $request リクエストデータ
+     * @return object $result App\Models\Post
+     */
+    public function updatePost($post_id, $request)
+    {
+        $result = $this->find($post_id);
+        $result->update($request->all());
+        return $result;
+    }
+    
     /**
      * 公開=>publish_flg=1
      * リクエストされたデータをpostsテーブルにinsertする
@@ -156,9 +186,145 @@ class Post extends Model
      * @param int $post_id 投稿ID
      * @return object $result App\Models\Post
      */
-    public function feachPostDateByPostId($post_id)
+    public function fetchPostDataByPostId($post_id)
     {
         $result = $this->find($post_id);
+        return $result;
+    }
+
+    /**
+     * 記事の更新処理
+     * リクエストされたデータをもとにpostデータを更新する
+     *
+     * @param object $request リクエストデータ
+     * @param object $post 投稿データ
+     * @param int $publish_status 公開ステータス (0:下書き, 1:公開, 2:予約公開)
+     * @return object $result App\Models\Post
+     */
+    public function updatePostStatus($request, $post, $publish_status)
+    {
+        $result = $post->fill([
+            'category_id'      => $request->category,
+            'title'            => $request->title,
+            'body'             => $request->body,
+            'publish_flg'      => $publish_status,
+        ]);
+
+        $result->save();
+
+        return $result;
+    }
+
+    //  /**
+    //  * 記事の更新処理
+    //  * 下書き保存=>publish_flg=0
+    //  * リクエストされたデータをもとにpostデータを更新する
+    //  *
+    //  * @param array $post 投稿データ
+    //  * @return object $result App\Models\Post
+    //  */
+    // public function updatePostToSaveDraft($request, $post)
+    // {
+    //     $result = $post->fill([
+    //         'category_id'      => $request->category,
+    //         'title'            => $request->title,
+    //         'body'             => $request->body,
+    //         'publish_flg'      => 0,
+    //     ]);
+
+    //     $result->save();
+
+    //     return $result;
+    // }
+
+    // /**
+    //  * 記事の更新処理
+    //  * 公開=>publish_flg=1
+    //  * リクエストされたデータをもとにpostデータを更新する
+    //  *
+    //  * @param array $post 投稿データ
+    //  * @return object $result App\Models\Post
+    //  */
+    // public function updatePostToRelease($request, $post)
+    // {
+    //     $result = $post->fill([
+    //         'category_id'      => $request->category,
+    //         'title'            => $request->title,
+    //         'body'             => $request->body,
+    //         'publish_flg'      => 1,
+    //     ]);
+
+    //     $result->save();
+
+    //     return $result;
+    // }
+
+    // /**
+    //  * 記事の更新処理
+    //  * 公開予約=>publish_flg=0
+    //  * リクエストされたデータをもとにpostデータを更新する
+    //  *
+    //  * @param array $post 投稿データ
+    //  * @return object $result App\Models\Post
+    //  */
+    // public function updatePostToReservationRelease($request, $post)
+    // {
+    //     $result = $post->fill([
+    //         'category_id'      => $request->category,
+    //         'title'            => $request->title,
+    //         'body'             => $request->body,
+    //         'publish_flg'      => 2,
+    //     ]);
+
+    //     $result->save();
+
+    //     return $result;
+    // }
+
+
+    /**
+     * 記事論理削除
+     * 
+     * @param int $post_id 投稿ID
+     * @return object $result App\Models\Post
+     */
+    public function trashPost($post_id) 
+    {
+        $result = $this->find($post_id);
+        $result->delete_flg = 1;
+        $result->save();
+        return $result;
+    }
+
+    /**
+     * ユーザーIDに紐づいたゴミ箱の投稿データを全て取得する
+     * 
+     * @param int $user_id ユーザーID
+     * @return Post
+     */
+    public function getAllTrashPostsByUserId($user_id)
+    {
+
+        $result = $this->where([
+            ['user_id', $user_id],
+            ['delete_flg', 1]])
+            ->orderBy('updated_at', 'DESC')
+            ->get();
+        return $result;
+    }
+
+    /**
+     * 記事の復元
+     * 
+     * @param int $post_id 投稿ID
+     * @return object $result App\Models\Post
+     */
+    public function reconstructionPost($post_id)
+    {
+        $result = $this->find($post_id);
+        $result->delete_flg = 0;
+        $result->publish_flg = 0;
+        $result->save();
         return $result;
     }
 }

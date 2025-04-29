@@ -5,7 +5,7 @@
 @section('content')
 <div class="px-8 py-8 mx-auto bg-white">
     <div class="flex items-center justify-between">
-        <span class="text-sm font-light text-gray-600">{{ $showPostData->updated_at }}</span>
+        <span class="text-sm font-light text-gray-600">{{ $showPostData->updated_at->format('Y/m/d') }}</span>
     </div>
 
     <div class="mt-2">

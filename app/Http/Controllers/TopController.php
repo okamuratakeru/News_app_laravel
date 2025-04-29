@@ -6,16 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Category;
-
+use App\Services\CurrentUserService;
 class TopController extends Controller
 {
     protected $post;
     protected $category;
-
+    protected $currentUserService;
     public function __construct()
     {
         $this->post = new Post();
         $this->category = new Category();
+        $this->currentUserService = new CurrentUserService();
     }
 
     /**
@@ -25,15 +26,7 @@ class TopController extends Controller
      */
     public function top()
     {
-        // ユーザーがログイン済み
-        if (Auth::check()) {
-            // 認証しているユーザーを取得
-            $user = Auth::user();
-            // 認証しているユーザーIDを取得
-            $user_id = $user->id;
-        } else {
-            $user_id = null;
-        }
+        $user_id = $this->currentUserService->getCurrentUserId();
 
         // カテゴリーを取得
         $categories = $this->category->getAllCategories();
@@ -55,15 +48,7 @@ class TopController extends Controller
      */
     public function articleShow($post_id)
     {
-        // ユーザーがログイン済み
-        if (Auth::check()) {
-            // 認証しているユーザーを取得
-            $user = Auth::user();
-            // 認証しているユーザーIDを取得
-            $user_id = $user->id;
-        } else {
-            $user_id = null;
-        }
+        $user_id = $this->currentUserService->getCurrentUserId();
         
         // カテゴリーを全て取得
         $categories = $this->category->getAllCategories();
@@ -84,15 +69,7 @@ class TopController extends Controller
      */
     public function articleCategory($category_id)
     {
-        // ユーザーがログイン済み
-        if (Auth::check()) {
-            // 認証しているユーザーを取得
-            $user = Auth::user();
-            // 認証しているユーザーIDを取得
-            $user_id = $user->id;
-        } else {
-            $user_id = null;
-        }
+        $user_id = $this->currentUserService->getCurrentUserId();
 
         $posts = $this->post->getPostsByCategoryId($category_id);
         $categories = $this->category->getAllCategories();

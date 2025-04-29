@@ -6,14 +6,7 @@
 <div class="h-screen overflow-y-scroll">
     <div class="px-4 sm:px-4">
         <div class="flex justify-between">
-            <div class="text-2xl font-bold pt-7">投稿</div>
-            <div class="pt-4">
-                <a href="{{ route('post.create') }}">
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded-md text-1xl font-medium hover:bg-blue-700 transition duration-300">
-                        新規追加
-                    </button>
-                </a>
-            </div>
+            <div class="text-2xl font-bold pt-7">ゴミ箱</div>
         </div>
         <div class="py-4">
             <div class="overflow-x-auto">
@@ -110,13 +103,16 @@
                                     </p>
                                 </td>
                                 <td class="px-5 py-5 mr-5 border-b border-gray-200 bg-white text-sm">
-                                    <a href="{{ route('post.edit', ['post_id' => $post->id]) }}" class="mr-3 text-blue-700 whitespace-no-wrap underline">
-                                        Edit
-                                    </a>
-                                    <form action="{{ route('post.trash', ['post_id' => $post->id]) }}" method="POST" class="inline">
+                                    <form action="{{ route('post.reconstruction', ['post_id' => $post->id]) }}" method="POST" class="inline" onclick="return confirm('記事を復元しますか?')">
                                         @csrf
-                                        <button type="submit" class="ml-5 underline text-red-700 whitespace-no-wrap" onclick="return confirm('ゴミ箱に移動しますか?')">
-                                            trash
+                                        <button type="submit" class="mr-3 text-blue-700 whitespace-no-wrap underline">
+                                            復元
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('post.delete', ['post_id' => $post->id]) }}" method="POST" class="inline" onclick="return confirm('記事を完全に削除しますか?')">
+                                        @csrf
+                                        <button type="submit" class="ml-5 underline text-red-700 whitespace-no-wrap">
+                                            削除
                                         </button>
                                     </form>
                                 </td>

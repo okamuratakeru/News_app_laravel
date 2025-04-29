@@ -8,15 +8,18 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
+use App\Services\CurrentUserService;
 class PostController extends Controller
 {
     private $post;
     private $category;
+    private $currentUserService;
 
     public function __construct()
     {
         $this->post = new Post();
         $this->category = new Category();
+        $this->currentUserService = new CurrentUserService();
     }
     /**
      * 投稿リスト
@@ -42,8 +45,7 @@ class PostController extends Controller
 
     public function store(PostRequest $request)
     {
-        $user = Auth::user();
-        $user_id = $user->id;
+        $user_id = $this->currentUserService->getCurrentUserId();
 
         switch (true) {
             // 下書き保存クリック時の処理
@@ -81,4 +83,55 @@ class PostController extends Controller
             'showPostData',
         ));
     }
+
+    /**
+     * 記事編集
+     * 
+     * @param int $post_id 投稿ID
+     * @return Response src/resources/views/user/list/edit.blade.phpを表示
+     */
+    public function edit($post_id) {
+        $post = $this->post->fetchPostDataByPostId($post_id);
+        $categories = $this->category->getAllCategories();
+        return view('user.list.edit', compact(
+            'post',
+            'categories',
+        ));
+    }
+
+    /**
+     * 記事更新
+     * 
+     * @param int $post_id 投稿ID
+     * @return Response src/resources/views/user/list/index.blade.phpを表示
+     */
+    public function update(PostRequest $request, $post_id) {
+        $user_id = $this->currentUserService->getCurrentUserId();
+
+        $post = $this->post->fetchPostDataByPostId($post_id);
+        $publish_status = 0; // デフォルトは下書き
+    
+        if ($request->has('release')) {
+            $publish_status = 1; // 公開
+        } elseif ($request->has('reservation_release')) {
+            $publish_status = 2; // 予約公開
+        }
+    
+        $this->post->updatePostStatus($request, $post, $publish_status);
+        return redirect()->route('user.index', ['id' => $user_id]);
+    }
+
+    /**
+     * 記事論理削除
+     * 
+     * @param int $post_id 投稿ID
+     * @return Response src/resources/views/user/list/index.blade.phpを表示
+     */
+    public function trash($post_id) {
+        $user_id = $this->currentUserService->getCurrentUserId();
+        $this->post->trashPost($post_id);
+        return redirect()->route('user.index', ['id' => $user_id]);
+    }
+
+
 }
