@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('category_id')->nullable()->constrained('categories');
+            $table->unsignedBigInteger('user_id')->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('category_id')->foreign('category_id')->references('id')->on('categories');
             $table->string('title', 255);
             $table->text('body')->nullable();
             $table->smallInteger('publish_flg')->default(0);

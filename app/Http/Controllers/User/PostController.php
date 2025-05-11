@@ -4,11 +4,14 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use App\Models\ReservationPost;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
 use App\Services\CurrentUserService;
+
+
 class PostController extends Controller
 {
     private $post;
@@ -56,16 +59,11 @@ class PostController extends Controller
             case $request->has('release'):
                 $this->post->insertPostToRelease($user_id, $request);
                 break;
-            // 予約公開クリック時の処理
-            case $request->has('reservation_release'):
-                $this->post->insertPostToReservationRelease($user_id, $request);
-                break;
             // 上記以外の処理
             default:
                 $this->post->insertPostToSaveDraft($user_id, $request);
                 break;
         }
-
 
         return redirect()->route('user.index', ['id' => $user_id]);
     }

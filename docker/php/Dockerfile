@@ -30,5 +30,9 @@ RUN node --version
 RUN npm --version
 
 WORKDIR /src
-ADD . /src/storage
-RUN chown -R www-data:www-data /src/storage
+
+COPY . /src
+
+# Laravelの権限設定（必須）
+RUN mkdir -p /src/storage /src/bootstrap/cache \
+    && chown -R www-data:www-data /src/storage /src/bootstrap/cache

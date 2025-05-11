@@ -21,9 +21,11 @@ services:
       - 5173:5173
     volumes:
       - ./:/src
-      - /src/node_modules
-      - /src/vendor
       - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - /src/vendor
+      - /src/node_modules
+    environment:
+      - TZ=Asia/Tokyo
 
   l11dev-mysql:
     image: mysql:8.0.37
@@ -42,3 +44,16 @@ services:
     container_name: "l11dev-redis"
     ports:
       - 16379:6379
+
+  l11dev-cron:
+    container_name: l11dev-cron
+    build:
+      context: ./docker/cron
+      dockerfile: Dockerfile
+    depends_on:
+      - l11dev-app
+    volumes:
+      - ./:/src
+    environment:
+      - TZ=Asia/Tokyo
+    command: ["cron", "-f"]

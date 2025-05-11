@@ -41,6 +41,11 @@ class Post extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function reservation_posts()
+    {
+        return $this->hasMany(ReservationPost::class);
+    }
+
     /**
      * ユーザーIDに紐づいた投稿リストを全て取得する
      * 
@@ -169,9 +174,9 @@ class Post extends Model
     {
         $result = $this->create([
             'user_id'          => $user_id,
-            'category_id'      => $request->category,
-            'title'            => $request->title,
-            'body'             => $request->body,
+            'category_id'      => $request['category'],
+            'title'            => $request['title'],
+            'body'             => $request['body'],
             'publish_flg'      => 2,
             'view_counter'     => 0,
             'favorite_counter' => 0,

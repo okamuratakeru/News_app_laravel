@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TopController;
 use App\Http\Controllers\User\PostController;
 use App\Http\Controllers\User\TrashController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\ReservationPostController;
 
 
 Route::get('/', [TopController::class, 'top'])->name('top');
@@ -55,6 +55,17 @@ Route::middleware('auth')->group(function () {
     // 記事完全削除
     Route::post('/post/delete/{post_id}', [TrashController::class, 'delete'])
         ->name('post.delete');
+});
+
+// 公開予約設定画面
+Route::controller(ReservationPostController::class)->group(function () {
+    // 予約画面
+    Route::get('/reservation/post/setting', [ReservationPostController::class, 'reservation'])
+        ->name('reservation.post');
+
+    //予約公開
+    Route::post('/reservation/post/store', [ReservationPostController::class, 'reservation_store'])
+        ->name('post.reservation_store');
 });
 
 require __DIR__.'/auth.php';

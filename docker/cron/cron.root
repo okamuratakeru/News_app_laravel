@@ -1,0 +1,2 @@
+* * * * * root date >> /tmp/cron_test.log
+* * * * * root /usr/local/bin/php /src/artisan schedule:run >> /var/log/cron.log 2>&1
