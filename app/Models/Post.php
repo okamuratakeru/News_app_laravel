@@ -43,7 +43,7 @@ class Post extends Model
 
     public function reservation_posts()
     {
-        return $this->hasMany(ReservationPost::class);
+        return $this->hasOne(ReservationPost::class);
     }
 
     /**

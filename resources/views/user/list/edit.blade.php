@@ -35,6 +35,14 @@
             </span>
         @endif
     </div>
+    <div>
+        <!-- 予約公開日時 -->
+        @if($post->publish_flg === 2)
+            <div>
+               <p>予約公開日時: {{ $post->reservation_posts->reservation_date }} {{ $post->reservation_posts->reservation_time }}</p>
+            </div>
+        @endif
+    </div>
     <form action="{{ route('post.update', ['post_id' => $post->id]) }}" method="POST" class="p-5">
       @csrf
         <div class="flex mt-6 mr-12">
