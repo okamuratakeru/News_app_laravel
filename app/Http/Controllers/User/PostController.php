@@ -76,7 +76,7 @@ class PostController extends Controller
      */
     public function show($post_id) {
         // リクエストされた投稿IDをもとにpostsテーブルから一意のデータを取得
-        $post = $this->post->feachPostDateByPostId($post_id);
+        $post = $this->post->fetchPostDataByPostId($post_id);
         return view('user.list.show', compact(
             'post',
         ));

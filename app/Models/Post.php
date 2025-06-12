@@ -75,17 +75,6 @@ class Post extends Model
         return $result;
     }
 
-    /**
-     * 投稿IDをもとにpostsテーブルから一意の投稿データを取得
-     * 
-     * @param int $post_id 投稿ID
-     * @return object $result App\Models\Post
-     */
-    public function feachPostDateByPostId($post_id)
-    {
-        $result = $this->find($post_id);
-        return $result;
-    }
 
     /**
      * カテゴリーIDに紐づいた投稿リストを全て取得する

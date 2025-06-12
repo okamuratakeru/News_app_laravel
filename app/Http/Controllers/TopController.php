@@ -31,7 +31,7 @@ class TopController extends Controller
         // カテゴリーを取得
         $categories = $this->category->getAllCategories();
         // 投稿を取得
-        $posts = $this->post->getAllPostsByUserId($user_id);
+        $posts = $this->post->getPostsSortByLatestUpdate();
 
         return view('top', compact(
             'user_id',
@@ -53,7 +53,7 @@ class TopController extends Controller
         // カテゴリーを全て取得
         $categories = $this->category->getAllCategories();
         // 記事IDをもとに特定の記事のデータを取得
-        $post = $this->post->feachPostDateByPostId($post_id);
+        $post = $this->post->fetchPostDataByPostId($post_id);
         return view('article.show', compact(
             'user_id',
             'categories',
